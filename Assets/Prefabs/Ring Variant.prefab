@@ -79,7 +79,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ring Variant
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2177742395472637906, guid: 259f3568a09a61e449d17a62078b7d0c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 259f3568a09a61e449d17a62078b7d0c, type: 3}
 --- !u!1 &6900619852021037358 stripped
 GameObject:

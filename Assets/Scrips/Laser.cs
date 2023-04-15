@@ -14,8 +14,6 @@ public class Laser : MonoBehaviour
     public string colliderTag;
     public float damage;
 
-    public GameObject particleEffectPrefab;
-
     void Update()
     {   
         CheckRange();
@@ -23,16 +21,11 @@ public class Laser : MonoBehaviour
         if (ray) ScaleRay();
     }
 
-    void DestroyBullet()
-    {
-       gameObject.SetActive(false);
-    }
-
     void CheckRange() 
     {
         if (transform.position.z > range)
         {    
-            DestroyBullet();
+            Destroy(this.gameObject);
         }
     }
 
@@ -41,14 +34,16 @@ public class Laser : MonoBehaviour
         transform.localScale = Vector3.Lerp(transform.localScale, targetScale, scaleSpeed * Time.deltaTime);
     }
 
-    void OnTriggerEnter(Collider collision)
+    void OnCollisionEnter(Collision collision)
     {   
+        
+        GameObject vfx = VFX.Instance.SpawnVFX("laser", transform.position);
         IActor actor = collision.gameObject.GetComponent<IActor>();
-
+        
         if (actor != null) 
-        {
-            actor.OnCollision();
-            DestroyBullet();
-        }
+        {   
+            actor.TakeDamage();
+            Destroy(this.gameObject);
+        }  
     }
 }

@@ -6,6 +6,8 @@ public class SpeedManager: MonoBehaviour
 {   
     public float startingSpeed;
     public static float speed;
+    public float minSpeed = 25;
+    public float maxSpeed = 35;
     public static bool accelerate = false;
     public static bool deaccelerate = false;
 
@@ -13,7 +15,7 @@ public class SpeedManager: MonoBehaviour
     public float startValue = 1;
     public float endValue = 1f;
     public float duration = 2;
-    public float speedFactor = 1;
+    private float newSpeed;
 
     void Awake()
     {
@@ -21,33 +23,30 @@ public class SpeedManager: MonoBehaviour
     }
     void Update()
     {
-        speed *= speedFactor;
         if (accelerate) 
         {
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / duration);
-            speedFactor = Mathf.Lerp(startValue, endValue,  t);
-            if (speedFactor >= endValue) Invoke("Deaccelerate", 2.0f);
+            newSpeed = Mathf.Lerp(minSpeed, maxSpeed, t);
+            speed = newSpeed;
         }
 
-        if (deaccelerate) 
+        else
         {
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / duration);
-            speedFactor = Mathf.Lerp(endValue, startValue, t);
-            if (speedFactor >= startValue) deaccelerate = false;
+            newSpeed = Mathf.Lerp(maxSpeed, minSpeed, t);
+            speed = newSpeed;
         }   
     }
 
     public static void Accelerate()
     {   
-        accelerate = true; 
-        Debug.Log("Accelerate manager");
+        accelerate = true;
     }
 
     public static void Deaccelerate ()
     {
-        deaccelerate = true;
-        Debug.Log("deaccelerate manager");
+        accelerate = false; 
     }
 }

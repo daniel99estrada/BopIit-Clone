@@ -11,6 +11,8 @@ TagManager:
   - Base
   - Camera
   - Ring
+  - Asteroid
+  - EnemyLaser
   layers:
   - Default
   - TransparentFX

@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class BackgroundAsteroidPool : MonoBehaviour
 {   
-    [System.Serializable]
-    public class Pool 
-    {
-        public GameObject prefab;
-        public int size;
-    }
+    // [System.Serializable]
+    // public class Pool 
+    // {
+    //     public GameObject prefab;
+    //     public int size;
+    // }
     
-    public List<Pool> pools;
+    // public List<Pool> pools;
+    public AsteroidPrefabsScriptableObject asteroids;
     public List<Queue<GameObject>> poolList;
 
     #region Singleton
@@ -20,7 +21,7 @@ public class BackgroundAsteroidPool : MonoBehaviour
 
     private void Awake()
     {
-        // if (Instance == null) Instance = this;
+        if (Instance == null) Instance = this;
     }
 
     #endregion
@@ -29,22 +30,19 @@ public class BackgroundAsteroidPool : MonoBehaviour
     {
         poolList = new List<Queue<GameObject>>();
 
-        foreach (Pool pool in pools)
+        foreach (GameObject prefab in asteroids.prefabs)
         {   
             Queue<GameObject> objectPool = new Queue<GameObject>();
 
-            for (int i = 0; i < pool.size; i++)
+            for (int i = 0; i < 1000; i++)
             {
-                GameObject obj = Instantiate(pool.prefab);
+                GameObject obj = Instantiate(prefab);
 
+                obj.AddComponent<Move>();
+                obj.transform.SetParent(this.transform);
+                obj.AddComponent<BackGroundAsteroids>();
                 obj.SetActive(false);
-                
-                ISpawner spawnManager = GetComponent<ISpawner>();
-                if (spawnManager != null) 
-                {
-                    spawnManager.BuildObject(obj);
-                }
-
+    
                 objectPool.Enqueue(obj);
             }
 

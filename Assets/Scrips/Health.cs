@@ -1,45 +1,36 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-public class Health : MonoBehaviour
-{   
-    public int maxHealth = 100;
-    public float healthFactor;
-    private float currentHealth;
+public class Health : MonoBehaviour {
+    public event Action<int> OnHealthChanged;
+    [SerializeField] public int maxHealth = 100;
+    [SerializeField] private int minHealth = 0;
+    private int _health;
 
-    public GameObject particleEffectPrefab;
-    public GameObject healthBar;
-    private HealthBar healthBarScript;
-
-    void Awake()
-    {
-        currentHealth = maxHealth;
-        
-        healthBarScript = healthBar.GetComponent<HealthBar>(); 
-        healthBar.SetActive(false);      
+    public int health 
+{
+        get {
+            return _health;
+        }
+        set {
+            value = Mathf.Clamp(value, minHealth, maxHealth);
+            _health = value;
+            if (OnHealthChanged != null) 
+            {
+                OnHealthChanged(_health);
+            }
+        }
     }
 
-    public void TakeDamage(float decrease)
-    {   
-        currentHealth -= decrease;
-        healthFactor = currentHealth/maxHealth;
-        healthBar.SetActive(true);
-        healthBarScript.ScaleBars(healthFactor);
-
-        if(currentHealth < 0) {
-            Destroy();
-        }    
-        healthFactor = currentHealth/maxHealth; 
-        Debug.Log("Current health: " + currentHealth);
+    private void Start() {
+        health = maxHealth;
     }
 
-    public void Destroy()
-    {
-        Instantiate(particleEffectPrefab, transform.position, Quaternion.identity);
-        // Destroy(this.gameObject);
-        Transform player = GameObject.FindGameObjectWithTag("Player").transform;
-        transform.position = new Vector3(player.position.x, player.position.y, 200);
-        currentHealth = maxHealth;
+    public void TakeDamage(int damageAmount) {
+        health -= damageAmount;
+    }
+
+    public void Heal(int healAmount) {
+        health += healAmount;
     }
 }

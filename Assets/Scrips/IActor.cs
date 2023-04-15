@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IActor
 {
-    void OnCollision();
+    void TakeDamage();
 }

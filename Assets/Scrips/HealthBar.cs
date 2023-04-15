@@ -2,32 +2,35 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
-{
-    private Transform parent;
+{   
+    private Health health; 
     private Transform bar1;
     private Transform bar2;
     private float healthFactor;
-    float maxSize = 10;
+    public float maxSize = 10;
 
     void Awake()
     {   
-        bar1 = transform.GetChild(0);
-        bar2 = transform.GetChild(1);   
-        // bar1.GetComponent<Renderer>().enabled = false;
-        // bar2.GetComponent<Renderer>().enabled = false;
-        Deactivate(); 
+        health = transform.parent.GetComponent<Health>();
+        health.OnHealthChanged += UpdateHealthBar;
     }
 
-    public void ScaleBars(float healthFactor) {
+    void Start()
+    {
+        bar1 = transform.GetChild(0);
+        bar2 = transform.GetChild(1);   
+    }
 
-        if (healthFactor < 0) 
+    public void UpdateHealthBar(int currentHealth) {
+
+        healthFactor = currentHealth / 100.0f;
+        if (healthFactor <= 0) 
         {
             healthFactor = 0;
-            Debug.Log("Health factor: " + healthFactor);
-            Deactivate();
-            // Invoke("Deactivate", 0.5f); 
+            VFX.Instance.SpawnVFX("explosion", transform.position); 
+            Destroy(transform.parent.gameObject);
+        }
 
-        };
         float x = maxSize * healthFactor;
         Vector3 position1 = new Vector3(-(maxSize - x) / 2, transform.position.y, transform.position.z);
         Vector3 position2 = new Vector3(x / 2, transform.position.y, transform.position.z);
@@ -38,13 +41,5 @@ public class HealthBar : MonoBehaviour
         bar1.localPosition = position1;
         bar2.localPosition = position2;
         bar2.localScale = scale2;
-        bar1.GetComponent<Renderer>().enabled = true;
-        bar2.GetComponent<Renderer>().enabled = true;
-    }
-    
-    void Deactivate () 
-    {
-        bar1.GetComponent<Renderer>().enabled = false;
-        bar2.GetComponent<Renderer>().enabled = false;
     }
 }
